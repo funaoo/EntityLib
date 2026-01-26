@@ -1,0 +1,43 @@
+# IDEs and Editors
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# Composer
+/vendor/
+composer.lock
+composer.phar
+
+# Build files
+*.phar
+/build/
+/out/
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Test files
+/tests/
+phpunit.xml
+
+# Plugin data (don't commit server-specific data)
+plugin_data/
+entities.json
+*.backup
+
+# Temporary files
+/tmp/
+/temp/
+*.tmp
+
+# PHPStan
+phpstan.neon
+.phpstan/

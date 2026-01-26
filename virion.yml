@@ -1,0 +1,8 @@
+name: EntityLib
+version: 1.0.0
+author: Funaoo
+api: 5.0.0
+
+# Antigen is the namespace prefix that will be added when compiled
+# This prevents conflicts with other plugins
+antigen: Funaoo\EntityLib
