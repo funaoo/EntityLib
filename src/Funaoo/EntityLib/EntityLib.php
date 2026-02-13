@@ -72,7 +72,7 @@ final class EntityLib{
 		}
 
 		self::$registered = true;
-		$plugin->getLogger()->info("EntityLib v" . self::getVersion() . " by " . self::getAuthor() . " initialized successfully");
+		$plugin->getLogger()->info("EntityLib");
 	}
 
 	public static function create(Vector3 $position, World $world) : EntityBuilder{
