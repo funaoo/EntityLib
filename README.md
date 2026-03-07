@@ -354,7 +354,7 @@ Inspired by:
 - Every server owner who's tired of writing entity code from scratch
 
 ## 🔗 Links
-
+- Discord Community: https://discord.gg/bn2tRUZtnk
 - GitHub: https://github.com/Funaoo/EntityLib
 
 ---
