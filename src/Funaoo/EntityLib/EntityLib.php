@@ -23,7 +23,7 @@ use Funaoo\EntityLib\storage\EntityStorage;
 
 final class EntityLib {
 
-    public const VERSION = '1.2.0';
+    public const VERSION = '1.1.0';
 
     public const HUMAN         = 'human';
     public const FLOATING_TEXT = 'floating_text';
