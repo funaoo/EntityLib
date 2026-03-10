@@ -48,7 +48,7 @@ final class EntityBuilder {
         private readonly World   $world,
     ) {}
 
-    // ── Type ──────────────────────────────────────────────────────────────────
+    //Type
 
     public function human(): self            { $this->type = EntityLib::HUMAN;    return $this; }
     public function villager(): self         { $this->type = EntityLib::VILLAGER; return $this; }
@@ -77,7 +77,7 @@ final class EntityBuilder {
         return $this;
     }
 
-    // ── Properties ────────────────────────────────────────────────────────────
+    // ── Properties
 
     public function setName(string $name): self                  { $this->name = $name;               return $this; }
     public function setSkin(Skin $skin): self                    { $this->skin = $skin;                return $this; }
@@ -108,7 +108,7 @@ final class EntityBuilder {
         return $this;
     }
 
-    // ── Hologram ──────────────────────────────────────────────────────────────
+    // ── Hologram
 
     /**
      * Adds a hologram line above the NPC (top → bottom order).
@@ -166,7 +166,7 @@ final class EntityBuilder {
         return $this;
     }
 
-    // ── Spawn ─────────────────────────────────────────────────────────────────
+    // ── Spawn 
 
     public function spawn(): BaseEntity {
         $location = Location::fromObject($this->position, $this->world, $this->yaw, $this->pitch);
