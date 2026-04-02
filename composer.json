@@ -1,7 +1,7 @@
 {
     "name": "funaoo/entitylib",
     "description": "A powerful and easy-to-use library for creating interactive NPCs and entities in PocketMine-MP 5",
-    "version": "1.2.0",
+    "version": "1.1.0",
     "type": "library",
     "license": "MIT",
     "authors": [
