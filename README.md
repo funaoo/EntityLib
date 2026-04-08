@@ -355,7 +355,7 @@ Inspired by:
 
 ## 🔗 Links
 
-- GitHub: https://github.com/Funaoo/EntityLib
+- Discord Support: https://discord.gg/fRe5NTrGNr
 
 ---
 
