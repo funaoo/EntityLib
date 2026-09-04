@@ -1,0 +1,21 @@
+{
+    "name": "funaoo/entitylib",
+    "description": "Library for creating interactive NPCs and entities in PocketMine-MP",
+    "version": "1.1.0",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Funaoo"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "pocketmine/pocketmine-mp": "^5.39"
+    },
+    "autoload": {
+        "psr-4": {
+            "Funaoo\\EntityLib\\": "src/Funaoo/EntityLib/"
+        }
+    }
+}
