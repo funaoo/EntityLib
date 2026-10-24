@@ -9,8 +9,11 @@ use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use Funaoo\EntityLib\EntityLib;
+use Funaoo\EntityLib\trait\ActorSpawnTrait;
 
 final class AnimalEntity extends BaseEntity {
+
+    use ActorSpawnTrait;
 
     private const NBT_ANIMAL_TYPE = 'AnimalType';
     private const VALID = [EntityLib::PIG, EntityLib::COW, EntityLib::SHEEP, EntityLib::CHICKEN];
@@ -26,6 +29,15 @@ final class AnimalEntity extends BaseEntity {
     }
 
     public static function getNetworkTypeId(): string { return EntityIds::PIG; }
+
+    protected function getActorTypeId(): string {
+        return match($this->animalType) {
+            EntityLib::COW     => EntityIds::COW,
+            EntityLib::SHEEP   => EntityIds::SHEEP,
+            EntityLib::CHICKEN => EntityIds::CHICKEN,
+            default            => EntityIds::PIG,
+        };
+    }
 
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);

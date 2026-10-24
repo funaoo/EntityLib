@@ -15,6 +15,7 @@ use Funaoo\EntityLib\entity\FloatingTextEntity;
 use Funaoo\EntityLib\entity\HumanEntity;
 use Funaoo\EntityLib\entity\MobEntity;
 use Funaoo\EntityLib\entity\VillagerEntity;
+use Funaoo\EntityLib\event\EntitySpawnEvent;
 use Funaoo\EntityLib\nametag\Hologram;
 
 final class EntityBuilder {
@@ -176,6 +177,14 @@ final class EntityBuilder {
             $type === EntityLib::VILLAGER        => new VillagerEntity($location, $skin, $nbt),
             default                              => new HumanEntity($location, $skin, $nbt),
         };
+
+        $spawnEvent = new EntitySpawnEvent($entity);
+        $spawnEvent->call();
+        if ($spawnEvent->isCancelled()) {
+            // Returned entity is already closed when a listener cancels the spawn.
+            $entity->close();
+            return $entity;
+        }
 
         $entity->spawnToAll();
         EntityLib::registerEntity($entity);

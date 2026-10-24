@@ -7,6 +7,7 @@ namespace Funaoo\EntityLib\interaction;
 use Closure;
 use pocketmine\player\Player;
 use Funaoo\EntityLib\entity\BaseEntity;
+use Funaoo\EntityLib\event\EntityInteractEvent;
 
 final class InteractionHandler {
 
@@ -32,8 +33,14 @@ final class InteractionHandler {
 
     public function hasCallback(int $entityId): bool { return isset($this->callbacks[$entityId]); }
 
-    public function handleInteraction(int $entityId, Player $player, BaseEntity $entity): void {
-        if (!isset($this->callbacks[$entityId]) || $this->cooldowns->isOnCooldown($entityId, $player)) return;
+    public function handleInteraction(int $entityId, Player $player, BaseEntity $entity, string $type = InteractionType::TAP): void {
+        if ($this->cooldowns->isOnCooldown($entityId, $player)) return;
+
+        $event = new EntityInteractEvent($player, $entity, $type);
+        $event->call();
+        if ($event->isCancelled()) return;
+
+        if (!isset($this->callbacks[$entityId])) return;
 
         $data = $this->callbacks[$entityId];
         try {

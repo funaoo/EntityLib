@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Funaoo\EntityLib\storage;
 
+use pocketmine\entity\InvalidSkinException;
 use pocketmine\entity\Skin;
 use pocketmine\math\Vector3;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 use Funaoo\EntityLib\entity\BaseEntity;
 use Funaoo\EntityLib\EntityLib;
+use Funaoo\EntityLib\skin\DefaultSkins;
 
 final class EntityStorage {
 
@@ -49,6 +51,31 @@ final class EntityStorage {
     public function backup(): bool   { return $this->provider->backup(); }
     public function count(): int     { return count($this->provider->load()); }
 
+    private function buildSkin(EntityData $ed): Skin {
+        $skinBytes = base64_decode($ed->skinDataBase64, true);
+        if ($skinBytes === false || !in_array(strlen($skinBytes), Skin::ACCEPTED_SKIN_SIZES, true)) {
+            return DefaultSkins::blank();
+        }
+
+        $cape = $ed->skinCapeBase64 !== '' ? base64_decode($ed->skinCapeBase64, true) : '';
+        if ($cape === false || ($cape !== '' && strlen($cape) !== 8192)) {
+            $cape = '';
+        }
+
+        try {
+            return new Skin(
+                $ed->skinId !== '' ? $ed->skinId : 'Standard_Custom',
+                $skinBytes,
+                $cape,
+                $ed->skinGeometryName,
+                $ed->skinGeometryData
+            );
+        } catch (InvalidSkinException $e) {
+            $this->plugin->getLogger()->warning("[EntityLib] Invalid saved skin for '{$ed->name}': " . $e->getMessage());
+            return DefaultSkins::blank();
+        }
+    }
+
     private function spawnFromData(EntityData $ed): bool {
         $wm = Server::getInstance()->getWorldManager();
 
@@ -63,15 +90,12 @@ final class EntityStorage {
             return false;
         }
 
-        $skinBytes = base64_decode($ed->skinDataBase64, true);
-        if ($skinBytes === false || strlen($skinBytes) < 8192) {
-            $skinBytes = str_repeat("\x00", 8192);
-        }
+        $skin = $this->buildSkin($ed);
 
         $builder = EntityLib::create(new Vector3($ed->x, $ed->y, $ed->z), $world)
             ->setType($ed->type)
             ->setName($ed->name)
-            ->setSkin(new Skin($ed->skinId !== '' ? $ed->skinId : 'Standard_Custom', $skinBytes))
+            ->setSkin($skin)
             ->setScale($ed->scale)
             ->setRotation($ed->yaw, $ed->pitch)
             ->setNameTagVisible($ed->nameTagVisible)

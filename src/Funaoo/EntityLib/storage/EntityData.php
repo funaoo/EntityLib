@@ -24,6 +24,9 @@ final class EntityData {
         public readonly string $skinDataBase64,
         public readonly array  $metadata,
         public readonly array  $particles,
+        public readonly string $skinCapeBase64   = '',
+        public readonly string $skinGeometryName = '',
+        public readonly string $skinGeometryData = '',
     ) {}
 
     public static function fromArray(array $d): self {
@@ -45,6 +48,9 @@ final class EntityData {
             skinDataBase64:       (string)($d['skinData']            ?? ''),
             metadata:             (array)($d['metadata']             ?? []),
             particles:            (array)($d['particles']            ?? []),
+            skinCapeBase64:       (string)($d['skinCape']            ?? ''),
+            skinGeometryName:     (string)($d['skinGeometryName']    ?? ''),
+            skinGeometryData:     (string)($d['skinGeometryData']    ?? ''),
         );
     }
 
@@ -67,6 +73,9 @@ final class EntityData {
             'skinData'             => $this->skinDataBase64,
             'metadata'             => $this->metadata,
             'particles'            => $this->particles,
+            'skinCape'             => $this->skinCapeBase64,
+            'skinGeometryName'     => $this->skinGeometryName,
+            'skinGeometryData'     => $this->skinGeometryData,
         ];
     }
 }

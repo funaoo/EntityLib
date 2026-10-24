@@ -14,6 +14,7 @@ use pocketmine\world\World;
 use Funaoo\EntityLib\effect\EffectManager;
 use Funaoo\EntityLib\entity\BaseEntity;
 use Funaoo\EntityLib\entity\EntityRegistry;
+use Funaoo\EntityLib\event\EntityDespawnEvent;
 use Funaoo\EntityLib\interaction\InteractionHandler;
 use Funaoo\EntityLib\listener\EntityListener;
 use Funaoo\EntityLib\nametag\Hologram;
@@ -23,7 +24,7 @@ use Funaoo\EntityLib\storage\EntityStorage;
 
 final class EntityLib {
 
-    public const VERSION = '1.2.0';
+    public const VERSION = '1.2.1';
 
     public const HUMAN         = 'human';
     public const FLOATING_TEXT = 'floating_text';
@@ -145,6 +146,8 @@ final class EntityLib {
     public static function remove(int $entityId, bool $permanent = false): bool {
         $entity = self::$entities[$entityId] ?? null;
         if ($entity === null) return false;
+
+        (new EntityDespawnEvent($entity, $permanent ? 'removed_permanent' : 'removed'))->call();
 
         if (!$entity->isClosed()) $entity->flagForDespawn();
 

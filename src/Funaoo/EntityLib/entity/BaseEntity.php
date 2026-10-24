@@ -17,6 +17,7 @@ use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\player\Player;
 use Funaoo\EntityLib\EntityLib;
+use Funaoo\EntityLib\interaction\InteractionType;
 use Funaoo\EntityLib\storage\EntityData;
 
 abstract class BaseEntity extends Human {
@@ -27,6 +28,7 @@ abstract class BaseEntity extends Human {
     private const NBT_SPAWN_Y         = 'SpawnY';
     private const NBT_SPAWN_Z         = 'SpawnZ';
     private const NBT_METADATA        = 'EntityLibMeta';
+    private const NBT_SCALE           = 'Scale';
 
     protected bool    $lookAtPlayers    = false;
     protected bool    $canCollide       = false;
@@ -51,7 +53,7 @@ abstract class BaseEntity extends Human {
         array    $metadata = [],
     ): CompoundTag {
         $tag = CompoundTag::create()
-            ->setFloat('Scale', $scale)
+            ->setFloat(self::NBT_SCALE, $scale)
             ->setString('CustomName', $name)
             ->setByte('CustomNameVisible', $nameTagVisible ? 1 : 0)
             ->setByte('CustomNameAlwaysVisible', $nameTagAlwaysVisible ? 1 : 0)
@@ -80,6 +82,12 @@ abstract class BaseEntity extends Human {
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);
 
+        // Entity::initEntity() does not read the scale tag, so apply it here.
+        $scale = $nbt->getFloat(self::NBT_SCALE, 1.0);
+        if ($scale > 0.0 && $scale !== 1.0) {
+            $this->setScale($scale);
+        }
+
         $this->lookAtPlayers = (bool)$nbt->getByte(self::NBT_LOOK_AT_PLAYERS, 0);
         $this->canCollide    = (bool)$nbt->getByte(self::NBT_CAN_COLLIDE, 0);
 
@@ -100,6 +108,7 @@ abstract class BaseEntity extends Human {
     public function saveNBT(): CompoundTag {
         $nbt = parent::saveNBT();
 
+        $nbt->setFloat(self::NBT_SCALE, $this->getScale());
         $nbt->setByte(self::NBT_LOOK_AT_PLAYERS, $this->lookAtPlayers ? 1 : 0);
         $nbt->setByte(self::NBT_CAN_COLLIDE, $this->canCollide ? 1 : 0);
         $nbt->setFloat(self::NBT_SPAWN_X, $this->spawnPosition->x);
@@ -168,16 +177,22 @@ abstract class BaseEntity extends Human {
     public function attack(EntityDamageEvent $source): void {
         $source->cancel();
         if ($source instanceof EntityDamageByEntityEvent && $source->getDamager() instanceof Player) {
-            $this->handleInteraction($source->getDamager());
+            $this->handleInteraction($source->getDamager(), InteractionType::LEFT_CLICK);
         }
     }
 
-    private function handleInteraction(Player $player): void {
+    /** Right click / tap (Player::interactEntity -> Entity::onInteract). */
+    public function onInteract(Player $player, Vector3 $clickPos): bool {
+        $this->handleInteraction($player, $player->isSneaking() ? InteractionType::SNEAK_TAP : InteractionType::TAP);
+        return true;
+    }
+
+    private function handleInteraction(Player $player, string $type): void {
         $name = $player->getName();
         $now  = microtime(true);
         if (isset($this->interactDebounce[$name]) && ($now - $this->interactDebounce[$name]) < 0.3) return;
         $this->interactDebounce[$name] = $now;
-        EntityLib::getInteractionHandler()->handleInteraction($this->getId(), $player, $this);
+        EntityLib::getInteractionHandler()->handleInteraction($this->getId(), $player, $this, $type);
     }
 
     public function setLookAtPlayers(bool $enable): void      { $this->lookAtPlayers = $enable; }
@@ -221,6 +236,9 @@ abstract class BaseEntity extends Human {
             canCollide:           $this->canCollide,
             skinId:               $this->getSkin()->getSkinId(),
             skinDataBase64:       base64_encode($this->getSkin()->getSkinData()),
+            skinCapeBase64:       base64_encode($this->getSkin()->getCapeData()),
+            skinGeometryName:     $this->getSkin()->getGeometryName(),
+            skinGeometryData:     $this->getSkin()->getGeometryData(),
             metadata:             $this->customMetadata,
             particles:            $particles,
         );

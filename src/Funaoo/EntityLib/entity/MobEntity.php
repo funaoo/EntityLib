@@ -9,8 +9,11 @@ use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use Funaoo\EntityLib\EntityLib;
+use Funaoo\EntityLib\trait\ActorSpawnTrait;
 
 final class MobEntity extends BaseEntity {
+
+    use ActorSpawnTrait;
 
     private const NBT_MOB_TYPE = 'MobType';
     private const VALID = [EntityLib::ZOMBIE, EntityLib::SKELETON, EntityLib::CREEPER];
@@ -26,6 +29,14 @@ final class MobEntity extends BaseEntity {
     }
 
     public static function getNetworkTypeId(): string { return EntityIds::ZOMBIE; }
+
+    protected function getActorTypeId(): string {
+        return match($this->mobType) {
+            EntityLib::SKELETON => EntityIds::SKELETON,
+            EntityLib::CREEPER  => EntityIds::CREEPER,
+            default             => EntityIds::ZOMBIE,
+        };
+    }
 
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);

@@ -8,9 +8,14 @@ use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
+use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
+use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 use Funaoo\EntityLib\EntityLib;
+use Funaoo\EntityLib\trait\ActorSpawnTrait;
 
 final class VillagerEntity extends BaseEntity {
+
+    use ActorSpawnTrait;
 
     private const NBT_PROFESSION = 'Profession';
 
@@ -24,7 +29,9 @@ final class VillagerEntity extends BaseEntity {
 
     private int $profession = self::PROFESSION_FARMER;
 
-    public static function getNetworkTypeId(): string { return EntityIds::VILLAGER_V2; }
+    public static function getNetworkTypeId(): string { return EntityIds::VILLAGER; }
+
+    protected function getActorTypeId(): string { return EntityIds::VILLAGER; }
 
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);
@@ -44,8 +51,13 @@ final class VillagerEntity extends BaseEntity {
             throw new \InvalidArgumentException("Profession must be 0–" . self::PROFESSION_MAX . ", got {$profession}");
         }
         $this->profession = $profession;
-        $this->sendData($this->getViewers());
+        $this->networkPropertiesDirty = true;
     }
 
     public function getProfession(): int { return $this->profession; }
+
+    protected function syncNetworkData(EntityMetadataCollection $properties): void {
+        parent::syncNetworkData($properties);
+        $properties->setInt(EntityMetadataProperties::VARIANT, $this->profession);
+    }
 }
