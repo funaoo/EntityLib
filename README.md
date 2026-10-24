@@ -6,7 +6,13 @@ EntityLib makes creating NPCs, floating text, and interactive entities super sim
 
 ## 🧩 Compatibility
 
-EntityLib works with [Amber](https://github.com/Amber-PM).
+EntityLib works with [Amber](https://github.com/Amber-PM), including all of its entity types:
+
+- 🧍 **NPCs** (Human entities with custom skins), with floating text above their head
+- 💬 **Floating Text** (standalone)
+- 🐖 **Animals** (pig, cow, sheep, chicken)
+- 🧟 **Mobs** (zombie, skeleton, creeper)
+- 🧑‍🌾 **Villagers**
 
 ## ✨ Features
 
@@ -69,6 +75,32 @@ EntityLib::createFloatingText(
     $world,
     "§l§dPlay Among Us\n§r§7Crewmates // Impostor\n§a8 people playing..."
 );
+```
+
+### NPC with Floating Text (Amber)
+
+An NPC with a floating text (hologram) above its head. Each line can be a plain string or a closure that refreshes automatically.
+
+```php
+use Funaoo\EntityLib\EntityLib;
+
+EntityLib::create($player->getPosition(), $player->getWorld())
+    ->human()
+    ->setSkin($player->getSkin())
+    ->setName("§l§bAmber Lobby")
+    ->setScale(1.0)
+    ->lookAtPlayers()
+    ->hologram([
+        "§l§bAmber §r§7Network",
+        "§7Click to join",
+        fn() => "§a" . count($this->getServer()->getOnlinePlayers()) . " players online"
+    ])
+    ->setHologramUpdateRate(20)
+    ->setHologramLineSpacing(0.3)
+    ->onInteract(function($player) {
+        $player->sendMessage("§aWelcome to Amber!");
+    })
+    ->spawn();
 ```
 
 ### NPC with Particle Effects
