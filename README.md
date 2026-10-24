@@ -4,6 +4,10 @@
 
 EntityLib makes creating NPCs, floating text, and interactive entities super simple. If you've used InvMenu, you'll feel right at home - the API is designed to be just as clean and intuitive.
 
+## 🧩 Compatibility
+
+EntityLib works with [Amber](https://github.com/Amber-PM).
+
 ## ✨ Features
 
 - 🎭 **Multiple Entity Types**: Humans, Animals (pig, cow, sheep, chicken), Mobs (zombie, skeleton, creeper), Villagers, and Floating Text
